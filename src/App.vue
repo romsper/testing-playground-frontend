@@ -78,7 +78,7 @@ onMounted(async () => {
       <div v-else-if="error" class="error">{{ error }}</div>
       <div v-else class="products-list">
         <div
-          v-for="product in products"
+            v-for="product in products.slice(0, 5)"
           :key="product.id"
           class="product-card"
         >
@@ -134,6 +134,7 @@ onMounted(async () => {
 }
 
 .products-container {
+  padding: 48px 0; 
   position: relative;
   width: 100%;
   margin: 1rem auto;

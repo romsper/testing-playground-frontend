@@ -1,5 +1,5 @@
 import http from "../api";
-import { LoginRequest, LoginResponse, RefreshTokenRequest } from "./models";
+import type { LoginRequest, LoginResponse, RefreshTokenRequest } from "./models";
 
 async function postLogin(request: LoginRequest) {
   return await http.post<LoginResponse>("auth/login", request);
