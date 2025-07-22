@@ -30,11 +30,13 @@ export const authStore = defineStore("authStore", {
   actions: {
     async login(input: LoginRequest) {
       try {
-        this.loading = true;
+        this.loading = false;
         this.auth = (await API.auth.postLogin(input).then((response) => response)).data;
+        this.error = <APIResponse>{};
       } catch (error) {
         const _error = error as AxiosError<ErrorResponse>;
 
+        this.loading = false;
         this.auth = <LoginResponse>{};
         this.error = {
           status: _error.status,
@@ -63,6 +65,11 @@ export const authStore = defineStore("authStore", {
       } finally {
         this.loading = false;
       }
+    },
+
+    async logout() {
+      this.$reset();
+      localStorage.removeItem("authStore");
     }
   }
 });

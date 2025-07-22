@@ -2,11 +2,11 @@
 import type { LoginRequest } from '@/network/auth/models';
 import { authStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-
-const { auth, loading, error } = storeToRefs(authStore());
-const { login } = authStore();
+const store = authStore();
+const { auth, loading, error } = storeToRefs(store);
+const txtError = ref<string>('');
 
 const loginRequest = ref<LoginRequest>({
   email: "",
@@ -14,8 +14,12 @@ const loginRequest = ref<LoginRequest>({
 });
 
 const submitLogin = async () => {
-  login(loginRequest.value);
+  store.login(loginRequest.value);
 };
+
+watch(() => error.value.message, (message) => {
+  txtError.value = message ?? '';
+})
 </script>
 
 <template>
@@ -26,6 +30,7 @@ const submitLogin = async () => {
       <div class="separator"></div>
       <md-outlined-text-field v-model="loginRequest.email" placeholder="Email" />
       <md-outlined-text-field v-model="loginRequest.password" type="password" placeholder="Password" />
+      <div class="txt-error">{{ txtError }}</div>
       <div class="separator"></div>
       <md-filled-button class="active-btn" @click="submitLogin">
         <div id="active-btn">Login</div>

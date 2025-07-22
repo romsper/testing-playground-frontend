@@ -1,15 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
 import LoginItem from './LoginItem.vue';
+import { storeToRefs } from 'pinia';
+import { authStore } from '@/stores/auth';
 
+const store = authStore();
+const { auth, loading, error } = storeToRefs(store);
 const showDialog = ref(false);
+const btnAuthText = ref('Registration');
+
+watch(() => auth.value.accessToken, (token) => {
+  btnAuthText.value = token ? 'Logout' : 'Registration';
+  if (token) showDialog.value = false
+})
+
+function handleAuthClick() {
+  if (auth.value.accessToken) {
+    store.logout();
+  } else {
+    showDialog.value = true;
+  }
+}
 </script>
 
 <template>
-    <header class="header">
-        <RouterLink to="/" class="logo-title-row">
-      <img alt="Logo" class="logo" src="@/assets/logo.svg"/>
+  <header class="header">
+    <RouterLink to="/" class="logo-title-row">
+      <img alt="Logo" class="logo" src="@/assets/logo.svg" />
       <div class="title">Brew & Bean</div>
     </RouterLink>
     <div class="actions">
@@ -18,14 +36,14 @@ const showDialog = ref(false);
         <RouterLink id="link" to="/about">Orders</RouterLink>
         <RouterLink id="link" to="/contact">Contact</RouterLink>
       </div>
-      <md-filled-button class="active-btn" @click="showDialog = true">
-        <div id="active-btn">Registration</div>
+      <md-filled-button :class="auth.accessToken ? 'disabled-btn' : 'active-btn'" @click="handleAuthClick">
+        <div id="active-btn">{{ btnAuthText }}</div>
       </md-filled-button>
-      <img alt="Avatar" class="avatar" src="@/assets/images/avatar.png"/>
+      <img v-if="auth.accessToken" alt="Avatar" class="avatar" src="@/assets/images/avatar.png" />
     </div>
   </header>
 
-  <LoginItem v-if="showDialog" @close="showDialog = false" />
+  <LoginItem v-if="showDialog && !auth.accessToken" @close="showDialog = false" />
 </template>
 
 <style scoped>
@@ -54,7 +72,7 @@ const showDialog = ref(false);
 }
 
 .header .links {
-  display: flex; 
+  display: flex;
   gap: 2rem;
   font-size: 1.2rem;
 }
@@ -72,8 +90,8 @@ const showDialog = ref(false);
 }
 
 .header .logo {
-  height: 40px;
-  width: 40px;
+  height: 60px;
+  width: 60px;
 }
 
 .header .avatar {

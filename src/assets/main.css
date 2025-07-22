@@ -39,7 +39,10 @@ md-filled-button.disabled-btn {
   --md-filled-button-container-color: gainsboro;
 }
 
-
+.txt-error {
+  font-size: 0.8rem;
+  color: var(--vt-c-error);
+}
 
 @media (hover: hover) {
   a:hover {
