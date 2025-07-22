@@ -41,6 +41,7 @@ md-filled-button.disabled-btn {
 
 .txt-error {
   font-size: 0.8rem;
+  font-weight: bold;
   color: var(--vt-c-error);
 }
 

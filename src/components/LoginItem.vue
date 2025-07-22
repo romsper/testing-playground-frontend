@@ -14,7 +14,12 @@ const loginRequest = ref<LoginRequest>({
 });
 
 const submitLogin = async () => {
-  store.login(loginRequest.value);
+  if (!loginRequest.value.email || !loginRequest.value.password) {
+    txtError.value = 'Please enter email and password';
+  } else {
+    txtError.value = '';
+    store.login(loginRequest.value);
+  }
 };
 
 watch(() => error.value.message, (message) => {
