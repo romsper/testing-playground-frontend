@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia';
 import { authStore } from '@/stores/auth';
-import CreateDialog from './dialogs/CreateDialog.vue';
+import CreateDialog from './dialogs/CreateUserDialog.vue';
 import LoginDialog from './dialogs/LoginDialog.vue';
 
 const store = authStore();
