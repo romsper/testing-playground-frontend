@@ -51,7 +51,7 @@ export const authStore = defineStore("authStore", {
 
     async refreshToken(request: RefreshTokenRequest) {
       try {
-        this.loading = true;
+        this.loading = false;
         this.auth = (await API.auth.postRefreshToken(request).then((response) => response)).data;
       } catch (error) {
         const _error = error as AxiosError<ErrorResponse>;

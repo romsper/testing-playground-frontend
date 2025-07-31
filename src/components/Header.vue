@@ -1,25 +1,40 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
-import LoginItem from './LoginItem.vue';
 import { storeToRefs } from 'pinia';
 import { authStore } from '@/stores/auth';
+import CreateDialog from './dialogs/CreateDialog.vue';
+import LoginDialog from './dialogs/LoginDialog.vue';
 
 const store = authStore();
 const { auth, loading, error } = storeToRefs(store);
-const showDialog = ref(false);
-const btnAuthText = ref('Registration');
+const btnAuthText = ref('Join');
+
+const showCreateDialog = ref(false)
+const showLoginDialog = ref(false)
+
+function openLoginDialog() {
+  showCreateDialog.value = false
+  showLoginDialog.value = true
+}
+
+onMounted(() => {
+  btnAuthText.value = auth.value.accessToken ? 'Logout' : 'Join';
+});
 
 watch(() => auth.value.accessToken, (token) => {
-  btnAuthText.value = token ? 'Logout' : 'Registration';
-  if (token) showDialog.value = false
-})
+  btnAuthText.value = token ? 'Logout' : 'Join';
+  if (token) {
+    showCreateDialog.value = false
+    showLoginDialog.value = false;
+  }
+});
 
 function handleAuthClick() {
   if (auth.value.accessToken) {
     store.logout();
   } else {
-    showDialog.value = true;
+    showCreateDialog.value = true;
   }
 }
 </script>
@@ -43,7 +58,8 @@ function handleAuthClick() {
     </div>
   </header>
 
-  <LoginItem v-if="showDialog && !auth.accessToken" @close="showDialog = false" />
+  <CreateDialog v-if="showCreateDialog" @close="showCreateDialog = false" @open-login="openLoginDialog" />
+  <LoginDialog v-if="showLoginDialog" @close="showLoginDialog = false" />
 </template>
 
 <style scoped>
