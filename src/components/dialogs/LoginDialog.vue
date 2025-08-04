@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { LoginRequest } from '@/network/auth/models';
-import { authStore } from '@/stores/auth';
+import { authStore } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
+import type { LoginRequest } from '../../network/auth/models';
 
 const store = authStore();
-const { auth, loading, error } = storeToRefs(store);
+const { error } = storeToRefs(store);
 const txtError = ref<string>('');
 
 const loginRequest = ref<LoginRequest>({

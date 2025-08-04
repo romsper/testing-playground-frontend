@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { request } from '@/network/api';
-import type { LoginRequest } from '@/network/auth/models';
-import { API } from '@/network/controllers';
-import type { ErrorResponse } from '@/network/types';
-import type { CreateRequest, CreateResponse } from '@/network/users/models';
-import { authStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
+import { API } from '../../network/controllers';
+import { authStore } from '../../stores/auth';
+import type { LoginRequest } from '../../network/auth/models';
+import { request } from '../../network/api';
+import type { ErrorResponse } from '../../network/types';
+import type { CreateRequest, CreateResponse } from '../../network/users/models';
 
 const store = authStore();
-const { auth, loading, error } = storeToRefs(store);
+const { error } = storeToRefs(store);
 const txtError = ref<string>('');
 
 const loginRequest = ref<LoginRequest>({

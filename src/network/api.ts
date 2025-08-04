@@ -29,7 +29,18 @@ instance.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  config.url?.includes('/login') && delete config.headers.Authorization;
+  if (
+    config.method === 'get' &&
+    config.url &&
+    config.url.includes('/products')
+  ) {
+    delete config.headers.Authorization;
+  }
+
+  if (config.url?.includes('/login')) {
+    delete config.headers.Authorization;
+  }
+
   return config;
 });
 

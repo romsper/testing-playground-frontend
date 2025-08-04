@@ -6,7 +6,7 @@ async function postCreateProduct(request: CreateProductRequest) {
 }
 
 async function getAllProducts(offset: number, limit: number) {
-  return await http.get<AllProductsResponse>(`products?offset=${offset}&limit=${limit}`);
+  return await http.get<AllProductsResponse>(`products/?offset=${offset}&limit=${limit}`);
 }
 
 async function getProductById(id: number) {

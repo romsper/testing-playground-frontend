@@ -7,7 +7,7 @@ import CreateDialog from './dialogs/CreateUserDialog.vue';
 import LoginDialog from './dialogs/LoginDialog.vue';
 
 const store = authStore();
-const { auth, loading, error } = storeToRefs(store);
+const { auth } = storeToRefs(store);
 const btnAuthText = ref('Join');
 
 const showCreateDialog = ref(false)
