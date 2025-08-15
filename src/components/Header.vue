@@ -47,9 +47,9 @@ function handleAuthClick() {
     </RouterLink>
     <div class="actions">
       <div class="links">
-        <RouterLink id="link" to="/products">Products</RouterLink>
-        <RouterLink id="link" to="/orders" v-if="auth.accessToken">Orders</RouterLink>
-        <RouterLink id="link" to="/contact">Contact</RouterLink>
+        <RouterLink id="nav-link" to="/products">Products</RouterLink>
+        <RouterLink id="nav-link" to="/orders" v-if="auth.accessToken">Orders</RouterLink>
+        <RouterLink id="nav-link" to="/contact">Contact</RouterLink>
       </div>
       <md-filled-button :class="auth.accessToken ? 'disabled-btn' : 'active-btn'" @click="handleAuthClick">
         <div id="active-btn">{{ btnAuthText }}</div>
@@ -93,7 +93,7 @@ function handleAuthClick() {
   font-size: 1.2rem;
 }
 
-#link {
+#nav-link {
   color: #333;
   font-size: 1rem;
   font-weight: bold;

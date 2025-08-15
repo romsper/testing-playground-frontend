@@ -50,7 +50,7 @@ async function fetchProducts() {
         name: product.name,
         image: 'placeholder.png',
         price: product.price
-      }))
+      })).slice(0, 5); // Limit to 5 products
     }
   } catch (e: any) {
     error.value = e.message
@@ -96,7 +96,7 @@ onMounted(fetchProducts)
       <div v-else-if="error" class="error">{{ error }}</div>
       <div v-else class="products-list">
         <div
-            v-for="product in products.slice(0, 5)"
+            v-for="product in products"
           :key="product.id"
           class="product-card"
         >
