@@ -8,7 +8,7 @@ import ProductItems from '@/components/ProductItems.vue';
     <div class="main-image-text">Welcome to Brew & Bean</div>
   </div>
 
-  <ProductItems />
+  <ProductItems :offset="0" :limit="5" />
 </template>
 
 <style scoped>
@@ -21,8 +21,7 @@ import ProductItems from '@/components/ProductItems.vue';
   height: 360px;
   border-radius: 15px;
   overflow: hidden;
-  margin: 1rem auto;
-  max-width: 1024px;
+  margin: 1rem 0;
   background: #fff;
 }
 
@@ -43,10 +42,5 @@ import ProductItems from '@/components/ProductItems.vue';
   border-radius: 8px;
   font-size: 1.5rem;
   pointer-events: none;
-}
-
-.loading, .error {
-  padding: 1rem;
-  color: #888;
 }
 </style>

@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { request } from '@/network/api';
 import { API } from '../network/controllers';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import type { AllProductsResponse, ProductResponse } from '@/network/products/models';
+
+const props = defineProps<{
+  offset?: number
+  limit?: number
+}>()
+
+const offset = computed(() => props.offset ?? 0)
+const limit = computed(() => props.limit ?? 10)
 
 interface Product {
   id: number
@@ -39,7 +47,7 @@ async function fetchProducts() {
   loading.value = true
   error.value = null
   try {
-    const { data, error: apiError } = (await request(API.products.getAllProducts(0, 5)));
+    const { data, error: apiError } = (await request(API.products.getAllProducts(offset.value, limit.value)));
     if (apiError) {
       error.value = apiError.reason || 'Failed to load products'
       products.value = []
