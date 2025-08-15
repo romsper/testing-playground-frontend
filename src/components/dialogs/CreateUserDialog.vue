@@ -44,7 +44,7 @@ const submitCreateUser = async () => {
   };
 }
 
-watch(() => error.value.message, (message) => {
+watch(() => error.value.reason, (message) => {
   txtError.value = message ?? '';
 })
 

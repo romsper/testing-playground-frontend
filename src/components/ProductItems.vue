@@ -41,7 +41,7 @@ async function fetchProducts() {
   try {
     const { data, error: apiError } = (await request(API.products.getAllProducts(0, 5)));
     if (apiError) {
-      error.value = apiError.message || 'Failed to load products'
+      error.value = apiError.reason || 'Failed to load products'
       products.value = []
     } else {
       const dataParsed = data as AllProductsResponse;

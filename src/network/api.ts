@@ -1,24 +1,24 @@
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { authStore } from "../stores/auth";
-import type { ErrorResponse } from './types';
+import type { APIResponse, ErrorResponse } from './types';
 
 const instance = axios.create({
   // baseURL: import.meta.env.VITE_API_ENDPOINT,
   baseURL: 'http://localhost:1111/api/v1/',
 });
 
-export async function request<T = any>(api: Promise<any>): Promise<{ data?: T; error?: any }> {
+export async function request<T = any>(api: Promise<any>): Promise<{ data?: T; error?: APIResponse }> {
   try {
     const response = await api;
     return { data: response.data };
   } catch (error) {
-    const err = error as AxiosError<ErrorResponse>;
+    const _error = error as AxiosError<ErrorResponse>;
     return {
       error: {
-        status: err.response?.status,
-        message: err.message,
-        code: err.response?.data?.code,
-        reason: err.response?.data?.reason,
+        status: _error.response?.status,
+        message: _error.message,
+        code: _error.response?.data?.code,
+        reason: _error.response?.data?.reason,
       }
     };
   }
