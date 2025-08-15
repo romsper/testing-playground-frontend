@@ -48,7 +48,7 @@ function handleAuthClick() {
     <div class="actions">
       <div class="links">
         <RouterLink id="link" to="/products">Products</RouterLink>
-        <RouterLink id="link" to="/about">Orders</RouterLink>
+        <RouterLink id="link" to="/orders" v-if="auth.accessToken">Orders</RouterLink>
         <RouterLink id="link" to="/contact">Contact</RouterLink>
       </div>
       <md-filled-button :class="auth.accessToken ? 'disabled-btn' : 'active-btn'" @click="handleAuthClick">
