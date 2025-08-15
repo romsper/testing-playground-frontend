@@ -1,5 +1,12 @@
+<script setup lang="ts">
+import ProductItems from '@/components/ProductItems.vue';
+
+</script>
+
 <template>
-  <p class="title">Products</p>
+  <div class="spacer" />
+  <p class="title">All Products</p>
+  <ProductItems :offset="0" :limit="50" :wrap="true" />
 </template>
 
 <style>

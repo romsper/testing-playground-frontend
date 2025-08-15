@@ -7,6 +7,7 @@ import type { AllProductsResponse, ProductResponse } from '@/network/products/mo
 const props = defineProps<{
   offset?: number
   limit?: number
+  wrap?: boolean
 }>()
 
 const offset = computed(() => props.offset ?? 0)
@@ -58,7 +59,7 @@ async function fetchProducts() {
         name: product.name,
         image: 'placeholder.png',
         price: product.price
-      })).slice(0, 5); // Limit to 5 products
+      }))
     }
   } catch (e: any) {
     error.value = e.message
@@ -98,11 +99,10 @@ onMounted(fetchProducts)
 
 <template>
     <div class="products-container">
-    <p class="title">Products</p>
     <div class="products-scroll">
       <div v-if="loading" class="loading">Loading...</div>
       <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else class="products-list">
+      <div v-else :class="['products-list', { 'products-list--wrap': props.wrap }]">
         <div
             v-for="product in products"
           :key="product.id"
@@ -127,15 +127,13 @@ onMounted(fetchProducts)
 
 <style scoped>
 .products-container {
-  padding: 48px 0; 
-  position: relative;
   width: 100%;
-  margin: 1rem auto;
-  max-width: 1024px;
+  margin: 0 auto;
   background: #fff;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Ensure left alignment */
+  align-items: flex-start;
+  padding: 0;
 }
 
 .products-scroll {
@@ -149,8 +147,11 @@ onMounted(fetchProducts)
   display: flex;
   flex-direction: row;
   gap: 1.5rem;
-  /* Prevent wrapping so it scrolls horizontally */
   flex-wrap: nowrap;
+}
+
+.products-list--wrap {
+  flex-wrap: wrap;
 }
 
 .product-card {
@@ -159,14 +160,13 @@ onMounted(fetchProducts)
   background: #fafafa;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  padding: 0 0 1rem;
-  min-width: 180px;
+  min-width: 200px;
   max-width: 200px;
-  /* Remove align-items if you want full width for children */
-}
-
-#card-content {
-  padding: 0 1rem;
+  width: 100%;
+  min-height: 320px;
+  box-sizing: border-box;
+  flex: 1 1 180px;
+  justify-content: flex-start;
 }
 
 .product-image {
@@ -175,10 +175,7 @@ onMounted(fetchProducts)
   object-fit: cover;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
   margin-bottom: 0.5rem;
-  align-self: stretch;
   display: block;
 }
 
@@ -187,6 +184,9 @@ onMounted(fetchProducts)
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding: 0 1rem;
+  flex: 1 1 auto;
+  position: relative;
 }
 
 .product-name {
@@ -194,6 +194,9 @@ onMounted(fetchProducts)
   margin-bottom: 0.25rem;
   text-align: left;
   width: 100%;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .product-description {
@@ -210,6 +213,7 @@ onMounted(fetchProducts)
   margin-bottom: 0.5rem;
   text-align: left;
   width: 100%;
+  margin-top: auto;      
 }
 
 .product-actions {
@@ -218,6 +222,8 @@ onMounted(fetchProducts)
   gap: 0.5rem;
   width: 100%;
   justify-content: space-between;
+  margin-top: 0.5rem;      
+  margin-bottom: 0.5rem; 
 }
 
 .product-actions button {
@@ -229,6 +235,10 @@ onMounted(fetchProducts)
   font-size: 1.2rem;
   cursor: pointer;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .product-actions button:hover {

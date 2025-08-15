@@ -8,7 +8,9 @@ import ProductItems from '@/components/ProductItems.vue';
     <div class="main-image-text">Welcome to Brew & Bean</div>
   </div>
 
-  <ProductItems :offset="0" :limit="5" />
+  <div class="spacer" />
+  <p class="title">Popular Products (first 4 products 🤣) </p>
+  <ProductItems :offset="0" :limit="4" :wrap="false" />
 </template>
 
 <style scoped>

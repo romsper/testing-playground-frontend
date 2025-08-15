@@ -17,7 +17,6 @@ import Header from './components/Header.vue';
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   margin: 0 auto;
 }
 </style>
