@@ -5,13 +5,18 @@ import { storeToRefs } from 'pinia';
 import { authStore } from '@/stores/auth';
 import CreateDialog from './dialogs/CreateUserDialog.vue';
 import LoginDialog from './dialogs/LoginDialog.vue';
+import { cartStore } from '@/stores/cartStore';
 
-const store = authStore();
-const { auth } = storeToRefs(store);
+const authPinia = authStore();
+const cartPinia = cartStore()
+
+const { auth } = storeToRefs(authPinia);
 const btnAuthText = ref('Join');
 
 const showCreateDialog = ref(false)
 const showLoginDialog = ref(false)
+
+const showCart = ref(false)
 
 function openLoginDialog() {
   showCreateDialog.value = false
@@ -32,7 +37,7 @@ watch(() => auth.value.accessToken, (token) => {
 
 function handleAuthClick() {
   if (auth.value.accessToken) {
-    store.logout();
+    authPinia.logout();
   } else {
     showCreateDialog.value = true;
   }
@@ -50,6 +55,18 @@ function handleAuthClick() {
         <RouterLink id="nav-link" to="/products">Products</RouterLink>
         <RouterLink id="nav-link" to="/orders" v-if="auth.accessToken">Orders</RouterLink>
         <RouterLink id="nav-link" to="/contact">Contact</RouterLink>
+        <div class="cart-link-wrapper" 
+          @mouseenter="showCart = true" 
+          @mouseleave="showCart = false"
+        >
+          <RouterLink id="nav-link" to="">
+            Cart
+            <span class="cart-badge" v-if="cartPinia.getItems.length > 0">{{ cartPinia.getItems.length }}</span>
+          </RouterLink>
+          <div v-if="showCart" class="cart-popup">
+            <div style="padding: 1rem;">Empty cart</div>
+          </div>
+        </div>
       </div>
       <md-filled-button :class="auth.accessToken ? 'disabled-btn' : 'active-btn'" @click="handleAuthClick">
         <div id="active-btn">{{ btnAuthText }}</div>
@@ -113,5 +130,43 @@ function handleAuthClick() {
 .header .avatar {
   height: 60px;
   width: 60px;
+}
+
+.cart-link-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -16px;
+  background: #2d7a46;
+  color: #fff;
+  border-radius: 50%;
+  min-width: 22px;
+  height: 22px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cart-popup {
+  position: absolute;
+  top: 130%;
+  right: 0;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  min-width: 260px;
+  z-index: 10;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
 }
 </style>

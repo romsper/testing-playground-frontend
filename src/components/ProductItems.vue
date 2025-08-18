@@ -3,6 +3,7 @@ import { request } from '@/network/api';
 import { API } from '../network/controllers';
 import { ref, onMounted, computed } from 'vue'
 import type { AllProductsResponse, ProductResponse } from '@/network/products/models';
+import { cartStore } from '@/stores/cartStore';
 
 const props = defineProps<{
   offset?: number
@@ -10,28 +11,20 @@ const props = defineProps<{
   wrap?: boolean
 }>()
 
+const store = cartStore()
+
 const offset = computed(() => props.offset ?? 0)
 const limit = computed(() => props.limit ?? 10)
 
-interface Product {
-  id: number
-  name: string
-  image: string
-  price: number
-}
-
-const products = ref<Product[]>([])
+const products = ref<ProductResponse[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
-const quantities = ref<Record<number, number>>({})
 
-function increment(id: number) {
-  quantities.value[id] = (quantities.value[id] || 0) + 1
+function increment(product: ProductResponse) {
+  store.addItem(product)
 }
-function decrement(id: number) {
-  if ((quantities.value[id] || 0) > 0) {
-    quantities.value[id]--
-  }
+function decrement(product: ProductResponse) {
+  store.removeItem(product)
 }
 const images = import.meta.glob('../assets/images/*.png', { eager: true, import: 'default' })
 
@@ -57,7 +50,7 @@ async function fetchProducts() {
       products.value = (dataParsed || []).map((product: ProductResponse) => ({
         id: product.id,
         name: product.name,
-        image: 'placeholder.png',
+        description: product.description,
         price: product.price
       }))
     }
@@ -71,30 +64,6 @@ async function fetchProducts() {
 
 onMounted(fetchProducts)
 
-// onMounted(async () => {
-//   loading.value = true
-//   try {
-//     // Replace the URL with your backend endpoint
-//     // const res = await fetch('http://localhost:3000/api/products')
-//     // if (!res.ok) throw new Error('Failed to fetch products')
-//     products.value = products.value = [
-//       { id: 1, name: 'Coffee Beans', image: 'placeholder.png', price: 12.99 },
-//       { id: 2, name: 'Espresso Machine', image: 'placeholder.png', price: 299.99 },
-//       { id: 3, name: 'French Press', image: 'placeholder.png', price: 19.99 },
-//       { id: 4, name: 'Coffee Mug', image: 'placeholder.png', price: 9.99 },
-//       { id: 5, name: 'Tea Leaves', image: 'placeholder.png', price: 8.99 },
-//       { id: 6, name: 'Coffee Grinder', image: 'placeholder.png', price: 49.99 },
-//       { id: 7, name: 'Milk Frother', image: 'placeholder.png', price: 29.99 },
-//       { id: 8, name: 'Coffee Filter', image: 'placeholder.png', price: 5.99 },
-//       { id: 9, name: 'Tea Kettle', image: 'placeholder.png', price: 24.99 },
-//       { id: 10, name: 'Coffee Scale', image: 'placeholder.png', price: 15.99 }
-//     ]
-//   } catch (e: any) {
-//     error.value = e.message
-//   } finally {
-//     loading.value = false
-//   }
-// })
 </script>
 
 <template>
@@ -108,15 +77,15 @@ onMounted(fetchProducts)
           :key="product.id"
           class="product-card"
         >
-          <img :src="getProductImage(product.image) as string" :alt="product.name" class="product-image" />
+          <img :src="getProductImage('placeholder.png') as string" :alt="product.name" class="product-image" />
           <div class="product-info">
             <div id="card-content" class="product-name">{{ product.name }}</div>
             <div id="card-content" class="product-description">A wonderful {{ product.name.toLowerCase() }} for your daily brew.</div>
             <div id="card-content" class="product-price">${{ product.price }}</div>
             <div id="card-content" class="product-actions">
-              <button @click="decrement(product.id)">-</button>
-              <span id="card-content" class="product-qty">{{ quantities[product.id] || 0 }}</span>
-              <button @click="increment(product.id)">+</button>
+              <button @click="decrement(product)">-</button>
+              <span id="card-content" class="product-qty">{{ store.getItems.filter(item => item.id === product.id).length || 0 }}</span>
+              <button @click="increment(product)">+</button>
             </div>
           </div>
         </div>
