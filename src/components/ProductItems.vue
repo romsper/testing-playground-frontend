@@ -23,11 +23,16 @@ const error = ref<string | null>(null)
 function increment(product: ProductResponse) {
   store.addItem(product)
 }
+
 function decrement(product: ProductResponse) {
   store.removeItem(product)
 }
-const images = import.meta.glob('../assets/images/*.png', { eager: true, import: 'default' })
 
+function getQty(item: ProductResponse) {
+  return store.getItems.filter(i => i.id === item.id).length || 0
+}
+
+const images = import.meta.glob('../assets/images/*.png', { eager: true, import: 'default' })
 function getProductImage(imageFile: string) {
   for (const path in images) {
     if (path.endsWith('/' + imageFile)) {
@@ -84,7 +89,7 @@ onMounted(fetchProducts)
             <div id="card-content" class="product-price">${{ product.price }}</div>
             <div id="card-content" class="product-actions">
               <button @click="decrement(product)">-</button>
-              <span id="card-content" class="product-qty">{{ store.getItems.filter(item => item.id === product.id).length || 0 }}</span>
+              <span id="card-content" class="product-qty">{{ getQty(product) }}</span>
               <button @click="increment(product)">+</button>
             </div>
           </div>

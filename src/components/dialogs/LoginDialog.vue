@@ -30,7 +30,7 @@ watch(() => error.value.reason, (message) => {
 <template>
   <div class="dialog-backdrop" @click.self="$emit('close')">
     <div class="dialog">
-      <button class="close-btn" @click="$emit('close')" aria-label="Закрыть">&times;</button>
+      <button class="close-btn" @click="$emit('close')" aria-label="Close">&times;</button>
       <div class="title">Login</div>
       <div class="separator"></div>
       <md-outlined-text-field v-model="loginRequest.email" placeholder="Email" />

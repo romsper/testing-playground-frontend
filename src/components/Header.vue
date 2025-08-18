@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
-import { RouterLink, RouterView } from 'vue-router'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia';
 import { authStore } from '@/stores/auth';
 import CreateDialog from './dialogs/CreateUserDialog.vue';
 import LoginDialog from './dialogs/LoginDialog.vue';
+import CartItems from './CartItems.vue';
 import { cartStore } from '@/stores/cartStore';
 
 const authPinia = authStore();
@@ -17,14 +18,26 @@ const showCreateDialog = ref(false)
 const showLoginDialog = ref(false)
 
 const showCart = ref(false)
+const cartPopupRef = ref<HTMLElement | null>(null)
 
 function openLoginDialog() {
   showCreateDialog.value = false
   showLoginDialog.value = true
 }
 
+function handleClickOutside(event: MouseEvent) {
+  if (showCart.value && cartPopupRef.value && !cartPopupRef.value.contains(event.target as Node)) {
+    showCart.value = false;
+  }
+}
+
 onMounted(() => {
   btnAuthText.value = auth.value.accessToken ? 'Logout' : 'Join';
+  document.addEventListener('mousedown', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside);
 });
 
 watch(() => auth.value.accessToken, (token) => {
@@ -55,16 +68,16 @@ function handleAuthClick() {
         <RouterLink id="nav-link" to="/products">Products</RouterLink>
         <RouterLink id="nav-link" to="/orders" v-if="auth.accessToken">Orders</RouterLink>
         <RouterLink id="nav-link" to="/contact">Contact</RouterLink>
-        <div class="cart-link-wrapper" 
-          @mouseenter="showCart = true" 
-          @mouseleave="showCart = false"
-        >
-          <RouterLink id="nav-link" to="">
+        <div class="cart-link-wrapper">
+          <button class="cart-link-btn" id="nav-link" to="" @click.prevent="showCart = !showCart">
             Cart
             <span class="cart-badge" v-if="cartPinia.getItems.length > 0">{{ cartPinia.getItems.length }}</span>
-          </RouterLink>
-          <div v-if="showCart" class="cart-popup">
-            <div style="padding: 1rem;">Empty cart</div>
+          </button>
+          <div v-if="showCart" class="cart-popup" ref="cartPopupRef">
+            <div v-if="cartPinia.getItems.length > 0">
+              <CartItems />
+            </div>
+            <div v-else class="empty-cart">Empty cart</div>
           </div>
         </div>
       </div>
@@ -137,6 +150,14 @@ function handleAuthClick() {
   display: inline-block;
 }
 
+.cart-link-btn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
 .cart-badge {
   position: absolute;
   top: -8px;
@@ -168,5 +189,11 @@ function handleAuthClick() {
   z-index: 10;
   padding: 1rem;
   border: 1px solid #e0e0e0;
+}
+
+.empty-cart {
+  padding: 1rem;
+  text-align: center;
+  color: #888;
 }
 </style>
