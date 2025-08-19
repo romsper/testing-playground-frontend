@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { request } from '@/network/api';
+import { API } from '@/network/controllers';
+import type { OrderResponse } from '@/network/orders/models';
 import { cartStore } from '@/stores/cartStore';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 
 const store = cartStore()
@@ -41,6 +44,47 @@ const uniqueItems = computed(() => {
     return Array.from(map.values())
 })
 
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+const showOrderPopup = ref(false)
+const orderCompleted = ref(false)
+const orderId = ref<number | null>(null)
+const orderStatus = ref<string | null>(null)
+
+async function orderCreate() {
+    loading.value = true
+    error.value = null
+    try {
+        const { data, error: apiError } = (await request(API.orders.postOrderCreate(
+            {
+                userId: undefined,
+                products: store.items.map(item => ({
+                    id: item.id
+                }))
+            }
+        )));
+        if (apiError) {
+            error.value = apiError.reason || 'Failed to create order'
+        } else {
+            const dataParsed = data as OrderResponse;
+            orderId.value = dataParsed.id
+            orderStatus.value = dataParsed.orderStatus
+            store.clearCart()
+
+            showOrderPopup.value = true
+        }
+    } catch (e: any) {
+        error.value = e.message
+    } finally {
+        loading.value = false
+    }
+}
+
+function closeOrderPopup() {
+    showOrderPopup.value = false
+    orderCompleted.value = true
+}
 </script>
 
 <template>
@@ -64,9 +108,21 @@ const uniqueItems = computed(() => {
             <span class="cart-total-label">Total:</span>
             <span class="cart-item-price cart-total-price">${{ total.toFixed(2) }}</span>
         </div>
-        <md-filled-button class="active-btn">
+        <md-filled-button class="active-btn" @click="orderCreate">
             <div id="active-btn">Checkout</div>
         </md-filled-button>
+    </div>
+
+    <!-- Popup Order Info -->
+    <div v-if="showOrderPopup" class="order-popup-overlay">
+        <div class="order-popup">
+            <button class="order-popup-close" @click="closeOrderPopup" aria-label="Close">&times;</button>
+            <div class="order-popup-title">Order Created!</div>
+            <div class="order-popup-content">
+                <div><strong>Order ID:</strong> {{ orderId }}</div>
+                <div><strong>Status:</strong> {{ orderStatus }}</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -135,9 +191,9 @@ const uniqueItems = computed(() => {
     min-width: 80px;
     text-align: right;
     font-size: 1.1rem;
-    align-self: center;      
+    align-self: center;
     margin-left: auto;
-    margin-right: 2.5rem;   
+    margin-right: 2.5rem;
     order: 2;
 }
 
@@ -157,11 +213,11 @@ const uniqueItems = computed(() => {
 }
 
 .cart-item-qty {
-  min-width: 24px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1rem;
-  color: #333;
+    min-width: 24px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
 }
 
 .cart-item-actions {
@@ -225,5 +281,60 @@ const uniqueItems = computed(() => {
 
 .cart-total-price {
     margin-right: 0;
+}
+
+.empty-cart {
+    padding: 1rem;
+    text-align: center;
+    color: #888;
+}
+
+.order-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.order-popup {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 2rem 2.5rem 1.5rem 2.5rem;
+    min-width: 320px;
+    max-width: 90vw;
+    position: relative;
+    text-align: center;
+}
+
+.order-popup-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.order-popup-content {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.order-popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: #333;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+    z-index: 2;
 }
 </style>

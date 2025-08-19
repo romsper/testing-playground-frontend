@@ -23,7 +23,6 @@ const router = createRouter({
       path: '/orders',
       name: 'orders',
       component: () => import('../views/OrdersView.vue'),
-      meta: { requiresAuth: true } 
     },
     {
       path: "/:catchAll(.*)",

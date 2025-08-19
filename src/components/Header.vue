@@ -66,7 +66,7 @@ function handleAuthClick() {
     <div class="actions">
       <div class="links">
         <RouterLink id="nav-link" to="/products">Products</RouterLink>
-        <RouterLink id="nav-link" to="/orders" v-if="auth.accessToken">Orders</RouterLink>
+        <RouterLink id="nav-link" to="/orders">Orders</RouterLink>
         <RouterLink id="nav-link" to="/contact">Contact</RouterLink>
         <div class="cart-link-wrapper">
           <button class="cart-link-btn" id="nav-link" to="" @click.prevent="showCart = !showCart">
@@ -74,10 +74,7 @@ function handleAuthClick() {
             <span class="cart-badge" v-if="cartPinia.getItems.length > 0">{{ cartPinia.getItems.length }}</span>
           </button>
           <div v-if="showCart" class="cart-popup" ref="cartPopupRef">
-            <div v-if="cartPinia.getItems.length > 0">
-              <CartItems />
-            </div>
-            <div v-else class="empty-cart">Empty cart</div>
+            <CartItems />
           </div>
         </div>
       </div>
@@ -189,11 +186,5 @@ function handleAuthClick() {
   z-index: 10;
   padding: 1rem;
   border: 1px solid #e0e0e0;
-}
-
-.empty-cart {
-  padding: 1rem;
-  text-align: center;
-  color: #888;
 }
 </style>
