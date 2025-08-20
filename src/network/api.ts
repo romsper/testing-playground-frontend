@@ -41,6 +41,14 @@ instance.interceptors.request.use((config) => {
     delete config.headers.Authorization;
   }
 
+  if (
+    config.method === 'get' &&
+    config.url?.includes('/orders') &&
+    !config.url.includes('/orders/user')
+  ) {
+    delete config.headers.Authorization;
+  }
+
   return config;
 });
 

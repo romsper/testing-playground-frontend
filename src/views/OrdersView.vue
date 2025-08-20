@@ -2,37 +2,56 @@
 import { request } from '@/network/api'
 import { API } from '@/network/controllers'
 import type { OrderResponse } from '@/network/orders/models'
-import { computed, ref } from 'vue'
+import { authStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
+import { computed, onMounted, ref, watch } from 'vue'
+
+const authPinia = authStore();
+const { auth } = storeToRefs(authPinia);
 
 const loading = ref(false)
 const error = ref<string | null>(null)
 const orderId = ref<string>('')
-const order = ref<OrderResponse | null>(null)
+const orders = ref<OrderResponse[]>([])
 
-const uniqueOrderProducts = computed(() => {
-  if (!order.value) return []
+function getUniqueOrderProducts(order: OrderResponse) {
   const map = new Map()
-  for (const item of order.value.products) {
+  for (const item of order.products) {
     if (map.has(item.id)) {
       map.get(item.id).quantity += 1
     } else {
-      // Клонируем объект и добавляем quantity = 1
       map.set(item.id, { ...item, quantity: 1 })
     }
   }
   return Array.from(map.values())
-})
+}
 
 async function getOrderById() {
   loading.value = true
   error.value = null
-  order.value = null
   try {
     const { data, error: apiError } = await request(API.orders.getOrderById(orderId.value));
     if (apiError) {
       error.value = apiError.reason || 'Failed to get order'
     } else {
-      order.value = data as OrderResponse;
+      orders.value = data ? [data as OrderResponse] : [];
+    }
+  } catch (e: any) {
+    error.value = e.message
+  } finally {
+    loading.value = false
+  }
+}
+
+async function getAllUserOrders() {
+  loading.value = true
+  error.value = null
+  try {
+    const { data, error: apiError } = await request(API.orders.getUserOrders());
+    if (apiError) {
+      error.value = apiError.reason || 'Failed to get orders'
+    } else {
+      orders.value = data as OrderResponse[];
     }
   } catch (e: any) {
     error.value = e.message
@@ -49,6 +68,24 @@ function formatDate(dateStr: string) {
 function getTotal(order: OrderResponse) {
   return order.totalAmount
 }
+
+watch(
+  () => auth.value.accessToken,
+  (newToken) => {
+    if (newToken && newToken.length > 0) {
+      getAllUserOrders();
+    } else {
+      orders.value = [];
+    }
+  }
+);
+
+onMounted(() => {
+  if (auth.value.accessToken && auth.value.accessToken.length > 0) {
+    getAllUserOrders();
+  }
+});
+
 </script>
 
 <template>
@@ -56,25 +93,28 @@ function getTotal(order: OrderResponse) {
   <md-outlined-text-field v-model="orderId" placeholder="Order ID" @keydown.enter="getOrderById" />
   <div v-if="error" class="order-error">{{ error }}</div>
 
-  <div v-if="order" class="order-card">
-    <div class="order-card-header">
-      <div><strong>Order ID:</strong> {{ order.id }}</div>
-      <div><strong>Status:</strong> {{ order.orderStatus }}</div>
-      <div><strong>Created:</strong> {{ formatDate(order.createdAt.toString()) }}</div>
-    </div>
-    <div class="order-divider"></div>
-    <div class="order-products-list">
-  <div class="order-product-row" v-for="product in uniqueOrderProducts" :key="product.id">
-    <div class="order-product-name">{{ product.name }}</div>
-    <div class="order-product-qty">x{{ product.quantity }}</div>
-    <div class="order-product-unit-price">${{ product.price.toFixed(2) }}</div>
-    <div class="order-product-price">${{ (product.price * product.quantity).toFixed(2) }}</div>
-  </div>
-</div>
-    <div class="order-divider"></div>
-    <div class="order-total-row">
-      <span class="order-total-label">Total:</span>
-      <span class="order-total-price">${{ getTotal(order).toFixed(2) }}</span>
+  <div v-if="orders.length > 0" class="orders-list">
+      <div v-if="auth.accessToken && auth.accessToken.length > 0" class="title">We found your recent orders</div>
+    <div class="order-card" v-for="order in orders" :key="order.id">
+      <div class="order-card-header">
+        <p>Order ID: {{ order.id }}</p>
+        <p>Status: {{ order.orderStatus }}</p>
+        <p>Created: {{ formatDate(order.createdAt.toString()) }}</p>
+      </div>
+      <div class="order-divider"></div>
+      <div class="order-products-list">
+        <div class="order-product-row" v-for="product in getUniqueOrderProducts(order)" :key="product.id">
+          <div class="order-product-name">{{ product.name }}</div>
+          <div class="order-product-qty">x{{ product.quantity }}</div>
+          <div class="order-product-unit-price">${{ product.price.toFixed(2) }}</div>
+          <div class="order-product-price">${{ (product.price * product.quantity).toFixed(2) }}</div>
+        </div>
+      </div>
+      <div class="order-divider"></div>
+      <div class="order-total-row">
+        <span class="order-total-label">Total:</span>
+        <span class="order-total-price">${{ getTotal(order).toFixed(2) }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -83,6 +123,13 @@ function getTotal(order: OrderResponse) {
 .order-error {
   color: red;
   margin-top: 1rem;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .order-card {
@@ -103,7 +150,7 @@ function getTotal(order: OrderResponse) {
   flex-wrap: wrap;
   gap: 1.5rem;
   justify-content: space-between;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .order-divider {
@@ -167,9 +214,11 @@ function getTotal(order: OrderResponse) {
 
 .order-total-label {
   color: #333;
+  font-weight: bold;
 }
 
 .order-total-price {
   color: #2d7a46;
+  font-weight: bold;
 }
 </style>

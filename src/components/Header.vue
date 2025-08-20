@@ -94,7 +94,10 @@ function handleAuthClick() {
   display: flex;
   align-items: center;
   gap: 1rem;
+  background: none;
   text-decoration: none;
+  box-shadow: none;
+  outline: none;
 }
 
 .header {
@@ -120,10 +123,17 @@ function handleAuthClick() {
   font-size: 1.2rem;
 }
 
+#nav-link:hover,
+#nav-link:focus,
+#nav-link:active,
 #nav-link {
   color: #333;
   font-size: 1rem;
   font-weight: bold;
+  background: none;
+  text-decoration: none;
+  box-shadow: none;
+  outline: none;
 }
 
 #auth {

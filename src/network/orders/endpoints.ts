@@ -9,7 +9,12 @@ async function getOrderById(orderId: string) {
   return await http.get<OrderResponse>(`orders/${orderId}`);
 }
 
+async function getUserOrders() {
+  return await http.get<OrderResponse[]>("orders/user");
+}
+
 export default {
   postOrderCreate,
-  getOrderById
+  getOrderById,
+  getUserOrders
 };

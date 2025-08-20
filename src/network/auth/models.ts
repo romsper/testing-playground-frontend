@@ -4,6 +4,7 @@ export type LoginRequest = {
   };
 
 export type LoginResponse = {
+    id: number;
     accessToken: string;
     refreshToken: string;
     createdAt: number;

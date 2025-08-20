@@ -2,11 +2,15 @@
 import { request } from '@/network/api';
 import { API } from '@/network/controllers';
 import type { OrderResponse } from '@/network/orders/models';
+import { authStore } from '@/stores/auth';
 import { cartStore } from '@/stores/cartStore';
+import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
 
 const store = cartStore()
+const authPinia = authStore();
+const { auth } = storeToRefs(authPinia);
 
 const images = import.meta.glob('../assets/images/*.png', { eager: true, import: 'default' })
 function getProductImage(imageFile: string) {
@@ -58,7 +62,7 @@ async function orderCreate() {
     try {
         const { data, error: apiError } = (await request(API.orders.postOrderCreate(
             {
-                userId: undefined,
+                userId: auth.value.id,
                 products: store.items.map(item => ({
                     id: item.id
                 }))
