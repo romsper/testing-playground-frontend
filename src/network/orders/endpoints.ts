@@ -5,7 +5,7 @@ async function postOrderCreate(request: OrderCreateRequest) {
   return await http.post<OrderResponse>("orders/create", request);
 }
 
-async function getOrderById(orderId: number) {
+async function getOrderById(orderId: string) {
   return await http.get<OrderResponse>(`orders/${orderId}`);
 }
 
