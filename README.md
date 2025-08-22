@@ -29,7 +29,7 @@ This project provides a `docker-compose.yml` file for quick startup.
 ### Standalone Docker
 You can also run the frontend using only Docker:
 ```sh
-   docker build -it romsper/testing-playground-frontend .
+   docker build -t romsper/testing-playground-frontend .
    docker run -p 4000:4000 romsper/testing-playground-frontend
 ```
 
