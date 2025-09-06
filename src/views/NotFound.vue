@@ -3,8 +3,8 @@
 
 <template>
     <div>
-      <h1 class="not found">Eh...</h1>
-      <h1 class="not found">Not Found</h1>
+      <h1 class="not found" data-test-group="not-found">Eh...</h1>
+      <h1 class="not found" data-test-group="not-found">Not Found</h1>
     </div>
   </template>
   

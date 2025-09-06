@@ -4,8 +4,8 @@ import ProductItems from '@/components/ProductItems.vue';
 
 <template>
   <div class="main-image">
-    <img src="@/assets/images/main-image.png" alt="Main Image" />
-    <div class="main-image-text">Welcome to Brew & Bean</div>
+    <img src="@/assets/images/main-image.png" alt="Main Image" data-test-id="main-image" />
+    <div class="main-image-text" data-test-id="main-image-text">Welcome to Brew & Bean</div>
   </div>
 
   <div class="spacer" />

@@ -59,26 +59,26 @@ function handleAuthClick() {
 
 <template>
   <header class="header">
-    <RouterLink to="/" class="logo-title-row">
+    <RouterLink to="/" class="logo-title-row" data-test-id="nav-link-home" data-test-group="nav-link">
       <img alt="Logo" class="logo" src="@/assets/logo.svg" />
       <div class="title">Brew & Bean</div>
     </RouterLink>
     <div class="actions">
       <div class="links">
-        <RouterLink id="nav-link" to="/products">Products</RouterLink>
-        <RouterLink id="nav-link" to="/orders">Orders</RouterLink>
-        <RouterLink id="nav-link" to="/contact">Contact</RouterLink>
+        <RouterLink data-test-id="nav-link-products" id="nav-link" data-test-group="nav-link" to="/products">Products</RouterLink>
+        <RouterLink data-test-id="nav-link-orders" id="nav-link" data-test-group="nav-link" to="/orders">Orders</RouterLink>
+        <RouterLink data-test-id="nav-link-contact" id="nav-link" data-test-group="nav-link" to="/contact">Contact</RouterLink>
         <div class="cart-link-wrapper">
-          <button class="cart-link-btn" id="nav-link" to="" @click.prevent="showCart = !showCart">
+          <button class="cart-link-btn" data-test-id="nav-link-cart" data-test-group="nav-link" id="nav-link" to="" @click.prevent="showCart = !showCart">
             Cart
-            <span class="cart-badge" v-if="cartPinia.getItems.length > 0">{{ cartPinia.getItems.length }}</span>
+            <span class="cart-badge" data-test-id="nav-link-cart-count" data-test-group="nav-link" v-if="cartPinia.getItems.length > 0">{{ cartPinia.getItems.length }}</span>
           </button>
           <div v-if="showCart" class="cart-popup" ref="cartPopupRef">
             <CartItems />
           </div>
         </div>
       </div>
-      <md-filled-button :class="auth.accessToken ? 'disabled-btn' : 'active-btn'" @click="handleAuthClick">
+      <md-filled-button :class="auth.accessToken ? 'disabled-btn' : 'active-btn'" @click="handleAuthClick" data-test-id="nav-link-auth" data-test-group="nav-link">
         <div id="active-btn">{{ btnAuthText }}</div>
       </md-filled-button>
       <img v-if="auth.accessToken" alt="Avatar" class="avatar" src="@/assets/images/avatar.png" />

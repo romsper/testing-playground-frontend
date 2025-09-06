@@ -75,22 +75,18 @@ onMounted(fetchProducts)
     <div class="products-container">
     <div class="products-scroll">
       <div v-if="loading" class="loading">Loading...</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
+      <div v-else-if="error" class="error" data-test-id="product-error">{{ error }}</div>
       <div v-else :class="['products-list', { 'products-list--wrap': props.wrap }]">
-        <div
-            v-for="product in products"
-          :key="product.id"
-          class="product-card"
-        >
-          <img :src="getProductImage('placeholder.png') as string" :alt="product.name" class="product-image" />
+        <div v-for="product in products" :key="product.id" class="product-card" :data-test-id="`product-card-${product.id}`" data-test-group="product-card">
+          <img :src="getProductImage('placeholder.png') as string" :alt="product.name" class="product-image" :data-test-id="`product-card-image-${product.id}`" data-test-group="product-card-image" />
           <div class="product-info">
-            <div id="card-content" class="product-name">{{ product.name }}</div>
-            <div id="card-content" class="product-description">A wonderful {{ product.name.toLowerCase() }} for your daily brew.</div>
-            <div id="card-content" class="product-price">${{ product.price }}</div>
+            <div id="card-content" class="product-name" :data-test-id="`product-card-name-${product.id}`" data-test-group="product-card-name">{{ product.name }}</div>
+            <div id="card-content" class="product-description" :data-test-id="`product-card-description-${product.id}`" data-test-group="product-card-description">A wonderful {{ product.name.toLowerCase() }} for your daily brew.</div>
+            <div id="card-content" class="product-price" :data-test-id="`product-card-price-${product.id}`" data-test-group="product-card-price">${{ product.price }}</div>
             <div id="card-content" class="product-actions">
-              <button @click="decrement(product)">-</button>
-              <span id="card-content" class="product-qty">{{ getQty(product) }}</span>
-              <button @click="increment(product)">+</button>
+              <button @click="decrement(product)" :data-test-id="`product-card-decrement-${product.id}`" data-test-group="product-card-decrement">-</button>
+              <span id="card-content" class="product-qty" :data-test-id="`product-card-qty-${product.id}`" data-test-group="product-card-qty">{{ getQty(product) }}</span>
+              <button @click="increment(product)" :data-test-id="`product-card-increment-${product.id}`" data-test-group="product-card-increment">+</button>
             </div>
           </div>
         </div>

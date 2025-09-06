@@ -5,7 +5,7 @@ import ProductItems from '@/components/ProductItems.vue';
 
 <template>
   <div class="spacer" />
-  <p class="title">All Products</p>
+  <p class="title" data-test-id="products-title">All Products</p>
   <ProductItems :offset="0" :limit="50" :wrap="true" />
 </template>
 

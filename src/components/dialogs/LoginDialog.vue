@@ -30,14 +30,14 @@ watch(() => error.value.reason, (message) => {
 <template>
   <div class="dialog-backdrop" @click.self="$emit('close')">
     <div class="dialog">
-      <button class="close-btn" @click="$emit('close')" aria-label="Close">&times;</button>
+      <button class="close-btn" data-test-id="login-close" @click="$emit('close')" aria-label="Close">&times;</button>
       <div class="title">Login</div>
       <div class="separator"></div>
-      <md-outlined-text-field v-model="loginRequest.email" placeholder="Email" />
-      <md-outlined-text-field v-model="loginRequest.password" type="password" placeholder="Password" />
-      <div class="txt-error">{{ txtError }}</div>
+      <md-outlined-text-field v-model="loginRequest.email" data-test-id="login-email" placeholder="Email" />
+      <md-outlined-text-field v-model="loginRequest.password" data-test-id="login-password" type="password" placeholder="Password" />
+      <div class="txt-error" data-test-id="login-error">{{ txtError }}</div>
       <div class="separator"></div>
-      <md-filled-button class="active-btn" @click="submitLogin">
+      <md-filled-button class="active-btn" data-test-id="login-submit" @click="submitLogin">
         <div id="active-btn">Login</div>
       </md-filled-button>
     </div>

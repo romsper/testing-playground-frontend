@@ -93,26 +93,26 @@ function closeOrderPopup() {
 
 <template>
     <div class="cart-items-container">
-        <div class="cart-item-card" v-for="item in uniqueItems" :key="item.id">
-            <img :src="getProductImage('placeholder.png') as string" :alt="item.name" class="cart-item-image" />
-            <div class="cart-item-price">${{ (item.price * getQty(item)).toFixed(2) }}</div>
-            <button class="cart-remove-btn" @click="store.removeAllDuplicates(item)" aria-label="Close">&times;</button>
+        <div class="cart-item-card" v-for="item in uniqueItems" :key="item.id" :data-test-id="`cart-item-${item.id}`" data-test-group="cart-item">
+            <img :src="getProductImage('placeholder.png') as string" :alt="item.name" class="cart-item-image" :data-test-id="`cart-item-image-${item.id}`" data-test-group="cart-item-image" />
+            <div class="cart-item-price" :data-test-id="`cart-item-price-${item.id}`" data-test-group="cart-item-price">${{ (item.price * getQty(item)).toFixed(2) }}</div>
+            <button class="cart-remove-btn" :data-test-id="`cart-item-remove-${item.id}`" data-test-group="cart-item-remove" @click="store.removeAllDuplicates(item)" aria-label="Close">&times;</button>
             <div class="cart-item-info">
                 <div class="cart-item-info-left">
-                    <div class="cart-item-name">{{ item.name }}</div>
+                    <div class="cart-item-name" :data-test-id="`cart-item-name-${item.id}`" data-test-group="cart-item-name">{{ item.name }}</div>
                     <div class="cart-item-actions">
-                        <button @click="decrement(item)">-</button>
-                        <span class="cart-item-qty">{{ getQty(item) }}</span>
-                        <button @click="increment(item)">+</button>
+                        <button :data-test-id="`cart-item-decrement-${item.id}`" data-test-group="cart-item-decrement" @click="decrement(item)">-</button>
+                        <span class="cart-item-qty" :data-test-id="`cart-item-qty-${item.id}`" data-test-group="cart-item-qty">{{ getQty(item) }}</span>
+                        <button :data-test-id="`cart-item-increment-${item.id}`" data-test-group="cart-item-increment" @click="increment(item)">+</button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="cart-item-card">
             <span class="cart-total-label">Total:</span>
-            <span class="cart-item-price cart-total-price">${{ total.toFixed(2) }}</span>
+            <span class="cart-item-price cart-total-price" data-test-id="cart-total-price">${{ total.toFixed(2) }}</span>
         </div>
-        <md-filled-button class="active-btn" @click="orderCreate">
+        <md-filled-button class="active-btn" data-test-id="cart-checkout" @click="orderCreate">
             <div id="active-btn">Checkout</div>
         </md-filled-button>
     </div>
@@ -120,11 +120,11 @@ function closeOrderPopup() {
     <!-- Popup Order Info -->
     <div v-if="showOrderPopup" class="order-popup-overlay">
         <div class="order-popup">
-            <button class="order-popup-close" @click="closeOrderPopup" aria-label="Close">&times;</button>
-            <div class="order-popup-title">Order Created!</div>
+            <button class="order-popup-close" data-test-id="order-popup-close" @click="closeOrderPopup" aria-label="Close">&times;</button>
+            <div class="order-popup-title" data-test-id="order-popup-title">Order Created!</div>
             <div class="order-popup-content">
-                <div><strong>Order ID:</strong> {{ orderId }}</div>
-                <div><strong>Status:</strong> {{ orderStatus }}</div>
+                <div data-test-id="order-popup-id"><strong>Order ID:</strong> {{ orderId }}</div>
+                <div data-test-id="order-popup-status"><strong>Status:</strong> {{ orderStatus }}</div>
             </div>
         </div>
     </div>

@@ -95,25 +95,25 @@ onMounted(() => {
 
   <div v-if="orders.length > 0" class="orders-list">
       <div v-if="auth.accessToken && auth.accessToken.length > 0" class="title">We found your recent orders</div>
-    <div class="order-card" v-for="order in orders" :key="order.id">
+    <div class="order-card" v-for="order in orders" :key="order.id" :data-test-id="`order-card-${order.id}`" data-test-group="order-card">
       <div class="order-card-header">
-        <p>Order ID: {{ order.id }}</p>
-        <p>Status: {{ order.orderStatus }}</p>
-        <p>Created: {{ formatDate(order.createdAt.toString()) }}</p>
+        <p :data-test-id="`order-id-${order.id}`" data-test-group="order-id">Order ID: {{ order.id }}</p>
+        <p :data-test-id="`order-status-${order.id}`" data-test-group="order-status">Status: {{ order.orderStatus }}</p>
+        <p :data-test-id="`order-created-${order.id}`" data-test-group="order-created">Created: {{ formatDate(order.createdAt.toString()) }}</p>
       </div>
       <div class="order-divider"></div>
       <div class="order-products-list">
-        <div class="order-product-row" v-for="product in getUniqueOrderProducts(order)" :key="product.id">
-          <div class="order-product-name">{{ product.name }}</div>
-          <div class="order-product-qty">x{{ product.quantity }}</div>
-          <div class="order-product-unit-price">${{ product.price.toFixed(2) }}</div>
-          <div class="order-product-price">${{ (product.price * product.quantity).toFixed(2) }}</div>
+        <div class="order-product-row" v-for="product in getUniqueOrderProducts(order)" :key="product.id" :data-test-id="`order-product-${product.id}`" data-test-group="order-product">
+          <div class="order-product-name" :data-test-id="`order-product-name-${product.id}`" data-test-group="order-product-name">{{ product.name }}</div>
+          <div class="order-product-qty" :data-test-id="`order-product-qty-${product.id}`" data-test-group="order-product-qty">x{{ product.quantity }}</div>
+          <div class="order-product-unit-price" :data-test-id="`order-product-unit-price-${product.id}`" data-test-group="order-product-unit-price">${{ product.price.toFixed(2) }}</div>
+          <div class="order-product-price" :data-test-id="`order-product-price-${product.id}`" data-test-group="order-product-price">${{ (product.price * product.quantity).toFixed(2) }}</div>
         </div>
       </div>
       <div class="order-divider"></div>
       <div class="order-total-row">
         <span class="order-total-label">Total:</span>
-        <span class="order-total-price">${{ getTotal(order).toFixed(2) }}</span>
+        <span class="order-total-price" :data-test-id="`order-total-${order.id}`" data-test-group="order-total">${{ getTotal(order).toFixed(2) }}</span>
       </div>
     </div>
   </div>
